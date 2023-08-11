@@ -25,9 +25,12 @@ userSearchBtn.addEventListener("click", ()=>{
 })
 
 function addToCityList(city) {
+    // Convert the city to lowercase and capitalize the first letter
+    const formattedCity = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+
     // Check if the city already exists in the list
-    const existingCity = Array.from(cityList.querySelectorAll("li")).find(item => item.textContent === city);
-    
+    const existingCity = Array.from(cityList.querySelectorAll("li")).find(item => item.textContent === formattedCity);
+
     if (!existingCity) {
         // Remove the oldest city if the list exceeds the maximum limit
         if (cityList.children.length >= maxPreviousCities) {
@@ -35,27 +38,17 @@ function addToCityList(city) {
         }
 
         const listItem = document.createElement("li");
-        listItem.textContent = city.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+        listItem.textContent = formattedCity;
         listItem.addEventListener("click", () => {
-            userSearch.value = city;
-            userSearchBtn.click(); // Trigger weather update
+            userSearch.value = formattedCity;
+            userSearchBtn.click();
         });
 
         cityList.appendChild(listItem);
     }
 }
 
-const clearButton = document.querySelector(".clear-button");
-clearButton.addEventListener("click", clearCityList);
-
-function clearCityList() {
-    cityList.innerHTML = "";
-    localStorage.setItem("cities", "[]"); // Clear local storage as well
-}
-
-
 function getWeather() {
-    // var city = document.getElementById("cityInput").value;
     var city = userSearch.value;
     var apiKey = "543002caf9995f9afabb7a2283601613"; 
     var apiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
@@ -74,4 +67,12 @@ function getWeather() {
 
       document.getElementById("forecast").innerHTML = forecastHtml;
     });
+  }
+
+  const clearButton = document.querySelector(".clear-button");
+  clearButton.addEventListener("click", clearCityList);
+  
+  function clearCityList() {
+      cityList.innerHTML = "";
+      localStorage.setItem("cities", "[]");
   }
