@@ -35,7 +35,20 @@ async function checkWeather(city){
     document.querySelector(".weather").style.display = "block";
 
     addToCityList(city);
+
+    // Save search result to local storage
+    saveSearchResultToLocalStorage(city, data);
 }
+
+function saveSearchResultToLocalStorage(city, data) {
+    const searchResult = {
+        city: city,
+        weather: data
+    };
+
+    localStorage.setItem("searchResult", JSON.stringify(searchResult));
+}
+
 
 function addToCityList(city) {
     const formattedCity = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
