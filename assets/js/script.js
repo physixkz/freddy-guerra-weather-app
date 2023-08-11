@@ -6,6 +6,13 @@ const maxPreviousCities = 5;
 const userSearch = document.querySelector(".search input");
 const userSearchBtn = document.querySelector(".search button");
 
+
+
+userSearchBtn.addEventListener("click", ()=>{
+    checkWeather(userSearch.value);
+    getWeather(userSearch.value)
+})
+
 async function checkWeather(city){
     const response = await fetch(apiURL + city +`&appid=${apiKey}`);
     var data = await response.json();
@@ -19,20 +26,11 @@ async function checkWeather(city){
     addToCityList(city);
 }
 
-userSearchBtn.addEventListener("click", ()=>{
-    checkWeather(userSearch.value);
-    getWeather(userSearch.value)
-})
-
 function addToCityList(city) {
-    // Convert the city to lowercase and capitalize the first letter
     const formattedCity = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
-
-    // Check if the city already exists in the list
     const existingCity = Array.from(cityList.querySelectorAll("li")).find(item => item.textContent === formattedCity);
 
     if (!existingCity) {
-        // Remove the oldest city if the list exceeds the maximum limit
         if (cityList.children.length >= maxPreviousCities) {
             cityList.removeChild(cityList.firstElementChild);
         }
@@ -45,8 +43,17 @@ function addToCityList(city) {
         });
 
         cityList.appendChild(listItem);
+
+        // Save city to local storage
+        saveCityListToLocalStorage();
     }
 }
+
+function saveCityListToLocalStorage() {
+    const cities = Array.from(cityList.querySelectorAll("li")).map(item => item.textContent);
+    localStorage.setItem("cities", JSON.stringify(cities));
+}
+
 
 function getWeather() {
     var city = userSearch.value;
@@ -76,3 +83,14 @@ function getWeather() {
       cityList.innerHTML = "";
       localStorage.setItem("cities", "[]");
   }
+
+const storedCities = JSON.parse(localStorage.getItem("cities")) || [];
+storedCities.forEach(city => {
+    const listItem = document.createElement("li");
+    listItem.textContent = city;
+    listItem.addEventListener("click", () => {
+        userSearch.value = city;
+        userSearchBtn.click();
+    });
+    cityList.appendChild(listItem);
+});
