@@ -6,6 +6,17 @@ const maxPreviousCities = 5;
 const userSearch = document.querySelector(".search input");
 const userSearchBtn = document.querySelector(".search button");
 
+// Load the city list from local storage
+const storedCities = JSON.parse(localStorage.getItem("cities")) || [];
+storedCities.forEach(city => {
+    const listItem = document.createElement("li");
+    listItem.textContent = city;
+    listItem.addEventListener("click", () => {
+        userSearch.value = city;
+        userSearchBtn.click();
+    });
+    cityList.appendChild(listItem);
+});
 
 
 userSearchBtn.addEventListener("click", ()=>{
@@ -84,13 +95,3 @@ function getWeather() {
       localStorage.setItem("cities", "[]");
   }
 
-const storedCities = JSON.parse(localStorage.getItem("cities")) || [];
-storedCities.forEach(city => {
-    const listItem = document.createElement("li");
-    listItem.textContent = city;
-    listItem.addEventListener("click", () => {
-        userSearch.value = city;
-        userSearchBtn.click();
-    });
-    cityList.appendChild(listItem);
-});
